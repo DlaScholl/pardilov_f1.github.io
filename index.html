@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анатомия болида Формулы-1</title>
+    <style>
+        :root {
+            --f1-red: #E10600;
+            --f1-black: #15151E;
+            --f1-dark-gray: #1F1F27;
+            --f1-light: #F3F3F3;
+            --f1-white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--f1-black);
+            color: var(--f1-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--f1-dark-gray);
+            border-bottom: 4px solid var(--f1-red);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: var(--f1-white);
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: var(--f1-red);
+            margin-right: 5px;
+        }
+
+        nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--f1-light);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .nav-btn.active, .nav-btn:hover {
+            background-color: var(--f1-red);
+            color: var(--f1-white);
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .page.active {
+            display:block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-left: 5px solid var(--f1-red);
+            padding-left: 15px;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #CCCCCC;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        /* PAGE 1: INTERACTIVE CAR */
+        .interactive-container {
+            position: relative;
+            background: radial-gradient(circle, #2d2d3a 0%, #15151e 100%);
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .svg-car-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: auto;
+            aspect-ratio: 900 / 400;
+        }
+
+        .svg-car {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Interactive Hotspots */
+        .hotspot {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background-color: var(--f1-red);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--f1-red);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            z-index: 10;
+        }
+
+        .hotspot::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--f1-red);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        .hotspot:hover {
+            transform: scale(1.2);
+            background-color: var(--f1-white);
+            color: var(--f1-red);
+        }
+
+        /* Hotspot Positioning based on a beautiful 900x400 top-down grid */
+        #hs-front-wing { top: 46%; left: 9%; }
+        #hs-front-tyres { top: 16%; left: 26%; }
+        #hs-suspension { top: 22%; left: 35%; }
+        #hs-halo { top: 46%; left: 51%; }
+        #hs-sidepod { top: 20%; left: 56%; }
+        #hs-floor { top: 14%; left: 68%; }
+        #hs-engine { top: 46%; left: 72%; }
+        #hs-rear-wing { top: 46%; left: 88%; }
+
+        /* Floating Info Panel */
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            width: 90%;
+            max-width: 600px;
+            background: rgba(31, 31, 39, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--f1-red);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 100;
+        }
+
+        .info-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .info-panel h3 {
+            color: var(--f1-red);
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-panel {
+            cursor: pointer;
+            color: var(--f1-white);
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        /* Action Buttons */
+        .action-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .cta-button {
+            background-color: var(--f1-red);
+            color: var(--f1-white);
+            border: none;
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(225, 6, 0, 0.4);
+        }
+
+        .cta-button:hover {
+            background-color: #b80500;
+            transform: translateY(-2px);
+        }
+
+        /* PAGES 2 & 3 LAYOUT */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: var(--f1-dark-gray);
+            border-radius: 8px;
+            padding: 25px;
+            border-top: 4px solid #333;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .card:hover {
+            border-top-color: var(--f1-red);
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--f1-white);
+            text-transform: uppercase;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(221, 6, 0, 0.15);
+            color: var(--f1-red);
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        footer {
+            background-color: #0b0b10;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: auto;
+            border-top: 1px solid #222;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><span>F1</span> Engineering</div>
+        <nav>
+            <button class="nav-btn active" onclick="switchPage('anatomy')">Устройство болида</button>
+            <button class="nav-btn" onclick="switchPage('about')">О спорте</button>
+            <button class="nav-btn" onclick="switchPage('science')">Физика и Стратегия</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- PAGE 1: ANATOMY -->
+        <section id="anatomy" class="page active">
+            <h1>Интерактивное устройство болида</h1>
+            <p>Нажимайте на мигающие указатели на пропорциональном чертеже болида (вид сверху), чтобы изучить его ключевые инженерные и аэродинамические компоненты.</p>
+            
+            <div class="interactive-container">
+                <div class="svg-car-wrapper">
+                    <!-- High-quality, perfectly proportioned top-down stylized vector drawing of a modern F1 car -->
+                    <svg class="svg-car" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="carbon" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#2a2a35;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#15151a;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="tyreGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#111" />
+                                <stop offset="50%" style="stop-color:#252525" />
+                                <stop offset="100%" style="stop-color:#111" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Main Body Center Chassis -->
+                        <path d="M 180 180 L 320 170 L 450 160 L 580 165 L 680 175 L 780 185 L 800 200 L 780 215 L 680 225 L 580 235 L 450 240 L 320 230 L 180 220 Z" fill="url(#carbon)" stroke="#444" stroke-width="2"/>
+                        
+                        <!-- Nose Cone -->
+                        <path d="M 80 190 L 180 180 L 180 220 L 80 210 Q 60 200 80 190 Z" fill="#E10600" stroke="#b80500" stroke-width="2"/>
+                        
+                        <!-- Front Wing -->
+                        <rect x="75" y="80" width="20" height="240" rx="3" fill="#1f1f27" stroke="#333" stroke-width="1.5"/>
+                        <path d="M 75 120 L 95 120 M 75 280 L 95 280" stroke="#E10600" stroke-width="3"/>
+                        <!-- Front Wing Endplates -->
+                        <rect x="65" y="75" width="35" height="8" rx="2" fill="#E10600"/>
+                        <rect x="65" y="317" width="35" height="8" rx="2" fill="#E10600"/>
+
+                        <!-- Front Tyres & Wheels -->
+                        <rect x="200" y="60" width="75" height="55" rx="6" fill="url(#tyreGrad)" stroke="#333"/>
+                        <circle cx="237" cy="87.5" r="16" fill="#1a1a1a" stroke="#E10600" stroke-width="2"/>
+                        
+                        <rect x="200" y="285" width="75" height="55" rx="6" fill="url(#tyreGrad)" stroke="#333"/>
+                        <circle cx="237" cy="312.5" r="16" fill="#1a1a1a" stroke="#E10600" stroke-width="2"/>
+                        
+                        <!-- Front Suspension Arms -->
+                        <line x1="180" y1="185" x2="210" y2="115" stroke="#aaa" stroke-width="3"/>
+                        <line x1="220" y1="180" x2="260" y2="115" stroke="#aaa" stroke-width="2"/>
+                        <line x1="180" y1="215" x2="210" y2="285" stroke="#aaa" stroke-width="3"/>
+                        <line x1="220" y1="220" x2="260" y2="285" stroke="#aaa" stroke-width="2"/>
+
+                        <!-- Sidepods (Понтоны) -->
+                        <path d="M 380 165 C 440 130, 520 130, 580 165 Z" fill="#E10600" stroke="#b80500" stroke-width="1.5"/>
+                        <path d="M 380 235 C 440 270, 520 270, 580 235 Z" fill="#E10600" stroke="#b80500" stroke-width="1.5"/>
+                        
+                        <!-- Floor / Underbody Venturi Channels (Днище) -->
+                        <path d="M 360 167 L 620 155 L 660 170 L 620 230 L 360 233 Z" fill="#111" opacity="0.6"/>
+                        <line x1="420" y1="162" x2="600" y2="157" stroke="#555" stroke-width="2" stroke-dasharray="5,5"/>
+                        <line x1="420" y1="238" x2="600" y2="243" stroke="#555" stroke-width="2" stroke-dasharray="5,5"/>
+
+                        <!-- Cockpit & Halo -->
+                        <ellipse cx="460" cy="200" rx="35" ry="16" fill="#050505" stroke="#666"/>
+                        <!-- Halo triangular protection structure -->
+                        <path d="M 425 200 L 485 180 M 425 200 L 485 220 M 485 180 C 500 200, 485 220, 485 220" stroke="#fff" stroke-width="4" fill="none" opacity="0.9"/>
+                        <!-- Driver Helmet Area -->
+                        <circle cx="475" cy="200" r="10" fill="#ffcc00"/>
+
+                        <!-- Engine Cover & Airbox -->
+                        <path d="M 500 190 L 640 192 L 670 200 L 640 208 L 500 210 Z" fill="url(#carbon)" stroke="#333"/>
+                        <polygon points="510,193 530,185 530,215 510,207" fill="#111"/>
+
+                        <!-- Rear Tyres & Wheels -->
+                        <rect x="690" y="50" width="85" height="65" rx="6" fill="url(#tyreGrad)" stroke="#333"/>
+                        <circle cx="732.5" cy="82.5" r="16" fill="#1a1a1a" stroke="#E10600" stroke-width="2"/>
+                        
+                        <rect x="690" y="285" width="85" height="65" rx="6" fill="url(#tyreGrad)" stroke="#333"/>
+                        <circle cx="732.5" cy="317.5" r="16" fill="#1a1a1a" stroke="#E10600" stroke-width="2"/>
+
+                        <!-- Rear Suspension -->
+                        <line x1="680" y1="180" x2="700" y2="115" stroke="#aaa" stroke-width="2.5"/>
+                        <line x1="680" y1="220" x2="700" y2="285" stroke="#aaa" stroke-width="2.5"/>
+
+                        <!-- Rear Wing -->
+                        <rect x="795" y="85" width="30" height="230" rx="2" fill="#1f1f27" stroke="#333" stroke-width="2"/>
+                        <rect x="790" y="80" width="40" height="8" fill="#E10600"/>
+                        <rect x="790" y="312" width="40" height="8" fill="#E10600"/>
+                    </svg>
+
+                    <!-- Interactive Overlaid Hotspots -->
+                    <div class="hotspot" id="hs-front-wing" onclick="showInfo('front-wing')">➔</div>
+                    <div class="hotspot" id="hs-front-tyres" onclick="showInfo('tyres')">➔</div>
+                    <div class="hotspot" id="hs-suspension" onclick="showInfo('suspension')">➔</div>
+                    <div class="hotspot" id="hs-halo" onclick="showInfo('halo')">➔</div>
+                    <div class="hotspot" id="hs-sidepod" onclick="showInfo('sidepod')">➔</div>
+                    <div class="hotspot" id="hs-floor" onclick="showInfo('floor')">➔</div>
+                    <div class="hotspot" id="hs-engine" onclick="showInfo('engine')">➔</div>
+                    <div class="hotspot" id="hs-rear-wing" onclick="showInfo('rear-wing')">➔</div>
+                </div>
+
+                <!-- Floating translucent window -->
+                <div class="info-panel" id="info-panel">
+                    <h3><span id="panel-title">Название детали</span> <span class="close-panel" onclick="closeInfo()">&times;</span></h3>
+                    <p id="panel-desc">Описание детали...</p>
+                </div>
+            </div>
+
+            <div class="action-container">
+                <button class="cta-button" onclick="switchPage('about')">Узнать больше о спорте ➔</button>
+            </div>
+        </section>
+
+        <!-- PAGE 2: ABOUT THE SPORT -->
+        <section id="about" class="page">
+            <h1>О мире Формулы-1</h1>
+            <p>Формула-1 — это высший класс гонок на автомобилях с открытыми колесами, санкционированный Международной автомобильной федерацией (FIA). Это полигон глобального технологического соперничества, где на кону стоят сотни миллионов долларов и инженерное превосходство.</p>
+            
+            <div class="grid-container">
+                <div class="card">
+                    <span class="badge">Соревнование</span>
+                    <h2>Два чемпионата в одном</h2>
+                    <p>Каждый гоночный сезон разыгрывает сразу две высшие награды. **Личный зачет** определяет лучшего пилота мира по сумме набранных очков. **Кубок конструкторов** вручается лучшей команде инженеров и конструкторов, чей болид оказался самым быстрым и надежным.</p>
+                </div>
+                <div class="card">
+                    <span class="badge">Командная работа</span>
+                    <h2>Секунды на пит-стопе</h2>
+                    <p>Гонки выигрываются не только на трассе, но и на пит-лейне. Бригада из 20 механиков способна полностью сменить 4 колеса менее чем за **2 секунды**. Любая задержка программистов, меняющих настройки угла крыла, или заминка гайковерта стоит победы.</p>
+                </div>
+                <div class="card">
+                    <span class="badge">ИТ и Технологии</span>
+                    <h2>Суперкомпьютеры и CFD</h2>
+                    <p>Разработка современных болидов полностью опирается на симуляции. Системы **Вычислительной гидродинамики (CFD)** запускаются на огромных суперкомпьютерных кластерах, чтобы просчитать потоки воздуха вокруг кузова до того, как деталь будет напечатана на 3D-принтере из карбона.</p>
+                </div>
+            </div>
+
+            <div class="action-container">
+                <button class="cta-button" onclick="switchPage('science')">Изучить физику и стратегии ➔</button>
+            </div>
+        </section>
+
+        <!-- PAGE 3: SCIENCE, STRATEGY & OVERTAKING -->
+        <section id="science" class="page">
+            <h1>Стратегии, аэродинамика и обгоны</h1>
+            <p>Здесь спортивный азарт встречается с точными законами физики, высшей математики и Data Science.</p>
+            
+            <div class="grid-container">
+                <div class="card">
+                    <span class="badge">Физика</span>
+                    <h2>Аэродинамика и прижимная сила</h2>
+                    <p>Болид F1 разработан по принципу «перевернутого самолета». Используя **уравнение Бернулли**, крылья и изогнутое днище создают зону колоссального низкого давления под машиной. Полученная прижимная сила позволяет болиду проходить повороты со скоростью более 250 км/ч с перегрузками до **5G**, теоретически позволяя ему ехать по потолку туннеля.</p>
+                </div>
+                <div class="card">
+                    <span class="badge">Математика</span>
+                    <h2>Шинная стратегия</h2>
+                    <p>Команды используют три состава гладких шин (сликов): **Soft** (быстрые, но быстро изнашиваются), **Medium** (сбалансированные) и **Hard** (медленные, но суперстойкие). Стратеги рассчитывают математические модели деградации резины в реальном времени, комбинируя отрезки для минимизации общего времени гонки.</p>
+                </div>
+                <div class="card">
+                    <span class="badge">Тактика обгона</span>
+                    <h2>Система DRS</h2>
+                    <p>Обгонять на огромных скоростях сложно из-за «грязного воздуха» (турбулентного следа от впереди идущей машины). Для решения этой проблемы применяется **DRS (Drag Reduction System)**. Если преследователь находится менее чем в 1 секунде позади соперника, на прямой открывается гидравлическая заслонка заднего крыла, снижая лобовое сопротивление и давая прибавку к скорости в **10-12 км/ч**.</p>
+                </div>
+                <div class="card">
+                    <span class="badge">Программирование</span>
+                    <h2>3 Терабайта телеметрии</h2>
+                    <p>На каждом болиде установлено более **300 датчиков**: от тепловизоров шин до датчиков частоты вращения вала. За один уикенд машина отправляет по радиоканалам около 3 ТБ данных. Программы на Python/C++ мгновенно анализируют телеметрию и помогают инженерам скорректировать гоночные алгоритмы прямо по ходу заезда.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2026 Инженерный разбор Формулы-1. Создано для школьников, фанатов и будущих инженеров.
+    </footer>
+
+    <script>
+        // Data for details
+        const detailsData = {
+            'front-wing': {
+                title: 'Переднее антикрыло',
+                desc: 'Генерирует первичную прижимную силу и направляет воздушные потоки вокруг передних колес в обход кузова. Малейшее повреждение торцевой пластины ломает всю аэродинамическую карту машины, снижая скорость в поворотах.'
+            },
+            'tyres': {
+                title: 'Гоночные шины (Слики)',
+                desc: 'Обеспечивают сцепление с асфальтом. Не имеют протектора для максимального пятна контакта. Рабочая температура достигает 100-110°C. Физика трения резины о трек — один из самых сложных элементов симуляции в F1.'
+            },
+            'suspension': {
+                title: 'Карбоновая подвеска',
+                desc: 'Использует сложные кинематические схемы (Push-rod или Pull-rod) с торсионами вместо пружин. Должна выдерживать тонны аэродинамической нагрузки, сохраняя неизменным дорожный просвет (клиренс).'
+            },
+            'halo': {
+                title: 'Система защиты HALO',
+                desc: 'Титановый каркас безопасности над кокпитом пилота. Выдерживает вес двухэтажного автобуса (около 12 тонн). Предназначен для защиты головы гонщика от летящих колес и крупных обломков.'
+            },
+            'sidepod': {
+                title: 'Боковые понтоны (Sidepods)',
+                desc: 'Внутри них скрыты массивные радиаторы охлаждения гибридного двигателя. Форма понтонов проектируется с помощью суперкомпьютеров, чтобы минимизировать лобовое сопротивление воздуха.'
+            },
+            'floor': {
+                title: 'Днище болида & Эффект Вентури',
+                desc: 'Главный источник прижимной силы современного болида. Под полом проходят специальные профилированные туннели. Воздух в них сужается и ускоряется, создавая под машиной мощное разрежение (эффект Вентури), буквально присасывающее болид к треку.'
+            },
+            'engine': {
+                title: 'Гибридная силовая установка',
+                desc: 'Турбированный V6 объемом всего 1.6 литра работает вместе с системами рекуперации кинетической энергии (MGU-K) и тепловой энергии выхлопа (MGU-H). Суммарная мощность превышает 1000 лошадиных сил при тепловом КПД более 50%.'
+            },
+            'rear-wing': {
+                title: 'Заднее антикрыло и DRS',
+                desc: 'Создает мощную прижимную силу на задней оси. Оснащено подвижной планкой системы DRS. Открытие крыла по сигналу компьютера снижает сопротивление воздуха и позволяет совершать скоростные обгоны на прямых.'
+            }
+        };
+
+        // Switch tabs/pages
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            // Deactivate all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show requested page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Highlight matching nav button
+            // Find button based on the function argument or origin
+            const buttons = document.querySelectorAll('.nav-btn');
+            if(pageId === 'anatomy') buttons[0].classList.add('active');
+            if(pageId === 'about') buttons[1].classList.add('active');
+            if(pageId === 'science') buttons[2].classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Close info panel if open
+            closeInfo();
+        }
+
+        // Show context window
+        function showInfo(partId) {
+            const panel = document.getElementById('info-panel');
+            const data = detailsData[partId];
+            
+            if (data) {
+                document.getElementById('panel-title').innerHTML = data.title + ' <span class="close-panel" onclick="closeInfo()">&times;</span>';
+                document.getElementById('panel-desc').innerText = data.desc;
+                panel.classList.add('active');
+            }
+        }
+
+        // Close context window
+        function closeInfo() {
+            document.getElementById('info-panel').classList.remove('active');
+        }
+    </script>
+</body>
+</        html>
+
+
+#болид хороший, но чуть искажен. стрелки не там где надо. нужно больше картинок, особенно шины и аэродинамика.
